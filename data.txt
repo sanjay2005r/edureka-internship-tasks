@@ -1,0 +1,8 @@
+this is the first paragraph. it has some numbers like 25, 30.5 and ₹4500.
+it also includes percentages like 10% and 12.75%.
+
+second paragraph starts here! it talks about prices: $99, $199.99 and years like 2023.
+do we handle questions? yes, we do.
+
+third paragraph has mixed data.
+user scored 89 marks out of 100. success rate was 89%.

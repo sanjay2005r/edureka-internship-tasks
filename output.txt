@@ -1,0 +1,9 @@
+Extracted Numbers:
+25, 30.5, ₹4500, 10%, 12.75%, $99, $199.99, 2023, 89, 100, 89%This is the first paragraph. It has some numbers like ,  and .
+It also includes percentages like  and .
+
+Second paragraph starts here! It talks about prices: ,  and years like .
+Do we handle questions? Yes, we do.
+
+Third paragraph has mixed data.
+User scored  marks out of . Success rate was .
