@@ -18,13 +18,13 @@ app.get("/user/:id", async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        error: "User not found..."
+        error: "User not found"
       });
     }
 
     if (id % 2 !== 0) {
       return res.status(400).json({
-        error: "User ID is odd, even IDs only allowed as per rule"
+        error: "User ID is odd, even IDs only allowed"
       });
     }
     
@@ -32,7 +32,7 @@ app.get("/user/:id", async (req, res) => {
   } 
   catch (error) {
     res.status(500).json({
-      error: "Failed to fetch users..."
+      error: "Failed to fetch users"
     });
   }
 });
