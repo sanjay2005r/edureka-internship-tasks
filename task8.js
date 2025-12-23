@@ -18,6 +18,10 @@ app.get("/", (req, res) => {
   res.send(`Hello! Your request ID is ${req.requestId}`);
 });
 
+app.post("/post", (req, res)=>{
+  res.send("This is post");
+});
+
 app.get("/user", (req, res) => {
   res.json({
     message: "User route hit",
