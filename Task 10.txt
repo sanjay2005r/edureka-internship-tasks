@@ -21,7 +21,7 @@ app.put("/user/:id", async (req, res) => {
   }
 });
 //======================================================================
-DELETE USER
+DELETE USER from DB
 
 app.delete("/user/:id", async (req, res) => {
   const id = req.params.id;
@@ -40,4 +40,97 @@ app.delete("/user/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to delete user" });
   }
+});
+
+Async await code for GET /user/details:
+
+app.get("/user/details", async (req, res) => {
+  try {
+    const sql = `
+      SELECT 
+        users.id,
+        users.name,
+        users.email,
+        profiles.age,
+        profiles.city,
+        orders.product,
+        orders.price
+      FROM users
+      INNER JOIN profiles ON users.id = profiles.user_id
+      INNER JOIN orders ON users.id = orders.user_id
+    `;
+
+    const [rows] = await db.execute(sql);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to fetch user details"
+    });
+  }
+});
+
+Update different tables by PUT method: profiles table
+
+app.put("/profile/:userId", (req, res) => {
+  const userId = req.params.userId;
+  const { age, city } = req.body;
+
+  if (!age || !city) {
+    return res.status(400).json({
+      error: "Age and city are required"
+    });
+  }
+
+  const sql = "UPDATE profiles SET age = ?, city = ? WHERE user_id = ?";
+
+  db.query(sql, [age, city, userId], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        error: "Failed to update profile"
+      });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Profile not found"
+      });
+    }
+
+    res.json({
+      message: "Profile updated successfully"
+    });
+  });
+});
+
+Update different tables by PUT method: orders table
+
+app.put("/order/:orderId", (req, res) => {
+  const orderId = req.params.orderId;
+  const { product, price } = req.body;
+
+  if (!product || !price) {
+    return res.status(400).json({
+      error: "Product and price are required"
+    });
+  }
+
+  const sql = "UPDATE orders SET product = ?, price = ? WHERE id = ?";
+
+  db.query(sql, [product, price, orderId], (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        error: "Failed to update order"
+      });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Order not found"
+      });
+    }
+
+    res.json({
+      message: "Order updated successfully"
+    });
+  });
 });
