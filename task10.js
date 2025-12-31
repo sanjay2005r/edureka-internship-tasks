@@ -3,17 +3,51 @@ const app = express();
 const db = require("./db"); // MySQL connection
 app.use(express.json());
 
-app.get("/user/all", (req, res) => {
-  const sql = "SELECT * FROM users";
+// app.get("/user/all", (req, res) => {
+//   const sql = "SELECT * FROM users";
 
-  db.query(sql, (err, results) => {
+//   db.query(sql, (err, results) => {
+//     if (err) {
+//       return res.status(500).json({
+//         error: "Failed to fetch users"
+//       });
+//     }
+
+//     res.json(results);
+//   });
+// });
+
+app.get("/user/all", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const sort = req.query.sort || "id";
+
+  const offset = (page - 1) * limit;
+
+  const allowedSortFields = ["id", "name", "email"];
+  if (!allowedSortFields.includes(sort)){
+    return res.status(400).json({
+      error: "Invalid sort field"
+    });
+  }
+  const sql = `
+    SELECT * FROM users
+    ORDER BY ${sort} 
+    LIMIT ? OFFSET ?
+  `;
+
+  db.query(sql, [limit, offset], (err, results) => {
     if (err) {
       return res.status(500).json({
         error: "Failed to fetch users"
       });
     }
-
-    res.json(results);
+    res.json({
+      page,
+      limit,
+      count: results.length,
+      data: results
+    });
   });
 });
 
@@ -63,7 +97,7 @@ app.post("/save_user", (req, res) => {
     });
   });
 });
-
+// Task 11 PUT & DELETE :-
 app.put("/user/:id",(req, res)=>{
   const id = req.params.id;
   const {name, email} = req.body;
