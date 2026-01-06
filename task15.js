@@ -4,7 +4,6 @@ const multer = require("multer");
 const fs = require("fs");
 const readline = require("readline");
 const db = require("./db");
-
 app.use(express.json());
 
 // Multer config (file saved to disk)
@@ -15,7 +14,6 @@ app.post("/file/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-
   const filename = req.file.filename;
 
   // Insert job with status PENDING
@@ -25,12 +23,9 @@ app.post("/file/upload", upload.single("file"), (req, res) => {
     if (err) {
       return res.status(500).json({ error: "Failed to create job" });
     }
-
     const jobId = result.insertId;
-
     // Background processing
     setImmediate(() => processCSV(jobId, req.file.path));
-
     // Respond immediately (non-blocking)
     res.json({
       message: "File uploaded, processing started",
@@ -45,19 +40,15 @@ function processCSV(jobId, filePath) {
   const rl = readline.createInterface({ input: stream });
 
   let isHeader = true;
-
   rl.on("line", (line) => {
     if (isHeader) {
       isHeader = false;
       return;
     }
-
     const [name, email, age] = line.split(",");
 
     if (!name || !email || !age) return;
-
     const sql = "INSERT INTO users (name, email) VALUES (?, ?)";
-
     db.query(sql, [name, email], () => {});
   });
 
@@ -74,18 +65,15 @@ function processCSV(jobId, filePath) {
 // Check file processing status
 app.get("/file/status/:id", (req, res) => {
   const jobId = req.params.id;
-
   const sql = "SELECT status FROM file_jobs WHERE id = ?";
 
   db.query(sql, [jobId], (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Failed to fetch status" });
     }
-
     if (results.length === 0) {
       return res.status(404).json({ message: "Job not found" });
     }
-
     res.json({
       jobId: jobId,
       status: results[0].status
